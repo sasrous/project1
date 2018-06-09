@@ -1,0 +1,14 @@
+.hidden{
+  display: none;
+}
+
+* {
+  background-color: black;
+ 
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  
+}
