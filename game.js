@@ -1,102 +1,117 @@
 
 
 
-function Game(options){this.ctx = options.ctx;};
-var movementImput = 'l';
-var sizeIndex = 30;
-var canvas = document.getElementById('map');
+function Game(options){
+this.ctx = options.ctx;
+this.map = options.map;
+this.canvas = options.canvas;
+this.movementImput = options.movementImput;
+this.sizeIndex = options.sizeIndex;
+
+}
+
+
+
+
+
 
 Game.prototype.update = function update(){
-this.ctx.clearRect(0, 0, canvas.width, canvas.height);//clean canvas
-this._drawSurface(map1);
-this._drawPJ(map1);
+this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);//clean canvas
+this._drawSurface();
+this._drawPJ();
 }
 
 Game.prototype.start = function (){
- this._drawSurface(map1);
- this._drawPJ(map1);
+ this._drawSurface();
+ this._drawPJ();
  this._assignEventsToKeys();
 }
 
-Game.prototype._drawSurface = function(arr){ 
+Game.prototype._drawSurface = function(){ 
   for (var columnIndex=0; columnIndex< 16; columnIndex++){
    for(var rowIndex=0; rowIndex<16 ;rowIndex++){
-     
-     if ((arr[rowIndex])[columnIndex] !== 0){
-      
+     if ((this.map[rowIndex])[columnIndex] !== 0){
        this.ctx.fillStyle = this.ctx.createPattern(renders.surfaceTexture, 'repeat');
-       this.ctx.fillRect(columnIndex * sizeIndex, rowIndex  * sizeIndex, sizeIndex, sizeIndex); }
-  }}}
+       this.ctx.fillRect(columnIndex * this.sizeIndex, rowIndex  * this.sizeIndex, this.sizeIndex, this.sizeIndex); 
+      }
+    }
+  }
+}
 
 
-Game.prototype._drawPJ = function(arr){ 
-    for (var columnIndex=0; columnIndex<16; columnIndex++){
-     for(var rowIndex=0; rowIndex<16;rowIndex++){
-       if ((arr[rowIndex])[columnIndex] === 'p'){
-         this.ctx.fillStyle = 'blue';
-         this.ctx.fillRect(columnIndex * sizeIndex, rowIndex  * sizeIndex, sizeIndex, sizeIndex); }
-  }}}
+Game.prototype._drawPJ = function(){ 
+  for (var columnIndex=0; columnIndex<16; columnIndex++){
+    for(var rowIndex=0; rowIndex<16;rowIndex++){
+      if ((this.map[rowIndex])[columnIndex] === 'p'){
+        this.ctx.fillStyle = 'blue';
+        this.ctx.fillRect(columnIndex * this.sizeIndex, rowIndex  * this.sizeIndex, this.sizeIndex, this.sizeIndex); 
+      }
+    }
+  }
+}
 
 
-Game.prototype._PJmove = function(arr){
-switch (movementImput){
-case 'l': 
-for (var columnIndex=0; columnIndex<16; columnIndex++){
-  for(var rowIndex=0; rowIndex<16;rowIndex++){
-    //find the PJ and check if there is space to move left
-    if ((arr[rowIndex])[columnIndex] === 'p' && ((arr[rowIndex])[columnIndex - 1] != x )){ 
-      arr[rowIndex][columnIndex]= 0 //delete the PJ from current position
-      arr[rowIndex][columnIndex - 1]='p' //move PJ to new position
-      this._checkGravity(arr); 
-      
-      this.update(); //paint current map status
-      return
-    } 
-  }} break;
-
-
-case'r': 
-for (var columnIndex=0; columnIndex<16; columnIndex++){
-  for(var rowIndex=0; rowIndex<16;rowIndex++){
-    if ((arr[rowIndex])[columnIndex] === 'p' && ((arr[rowIndex])[columnIndex + 1] != x )){
-      arr[rowIndex][columnIndex]= 0
-      arr[rowIndex][columnIndex + 1]='p'
-      this._checkGravity(arr);
-      
-      this.update(); //paint current map status
-      return
-    } 
-  }} break;
-  
-case 'up': 
-for (var columnIndex=0; columnIndex<16; columnIndex++){
-for(var rowIndex=0; rowIndex<16;rowIndex++){
-  if ((arr[rowIndex])[columnIndex] === 'p' ){ //find PJ 
-    this._moveColumnUp(columnIndex, arr); //move row up
-    arr[rowIndex-1][columnIndex]='p' // move PJ up
+Game.prototype._PJmove = function(){
+switch (this.movementImput){
     
-    this.update(); //paint current map status
-    return}
-}}  break;
+  case 'l': 
+  for (var columnIndex=0; columnIndex<16; columnIndex++){
+    for(var rowIndex=0; rowIndex<16;rowIndex++){
+      //find the PJ and check if there is space to move left
+      if ((this.map[rowIndex])[columnIndex] === 'p' && ((this.map[rowIndex])[columnIndex - 1] != x )){ 
+        this.map[rowIndex][columnIndex]= 0 //delete the PJ from current position
+        this.map[rowIndex][columnIndex - 1]='p' //move PJ to new position
+        this._checkGravity(); 
+        this.update(); //paint current map status
+        return
+      } 
+    }
+  } break;
 
-}}
+
+  case'r': 
+  for (var columnIndex=0; columnIndex<16; columnIndex++){
+    for(var rowIndex=0; rowIndex<16;rowIndex++){
+      if ((this.map[rowIndex])[columnIndex] === 'p' && ((this.map[rowIndex])[columnIndex + 1] != x )){
+        this.map[rowIndex][columnIndex]= 0
+        this.map[rowIndex][columnIndex + 1]='p'
+        this._checkGravity();
+        this.update(); //paint current map status
+        return
+      } 
+    }
+  } break;
+    
+  case 'up': 
+  for (var columnIndex=0; columnIndex<16; columnIndex++){
+    for(var rowIndex=0; rowIndex<16;rowIndex++){
+      if ((this.map[rowIndex])[columnIndex] === 'p' ){ //find PJ 
+        this._moveColumnUp(columnIndex); //move row up
+        this.map[rowIndex-1][columnIndex]='p' // move PJ up
+        this.update(); //paint current map status
+        return
+      }
+    }
+  }  break;
+
+}};
 
 Game.prototype.goUp = function (){
-  movementImput = 'up';
-  this._PJmove(map1);
-  }
+  this.movementImput = 'up';
+  this._PJmove();
+}
 
 Game.prototype.goLeft = function (){
   
-    movementImput = 'l';
-    this._PJmove(map1);
-  }
+  this.movementImput = 'l';
+  this._PJmove();
+}
   
 Game.prototype.goRight = function (){
 
-  movementImput = 'r';
-  this._PJmove(map1);
-    }
+  this.movementImput = 'r';
+  this._PJmove();
+}
  
 Game.prototype._assignEventsToKeys = function(){
   
@@ -105,12 +120,12 @@ Game.prototype._assignEventsToKeys = function(){
     switch (e.keyCode){
       case 38: //arrow up 
       this.goUp();
-      
       break;
      
       case 37: //arrow left
       this.goLeft();
       break;
+
       case 39: //arrow right
       this.goRight();
       break;
@@ -120,34 +135,31 @@ Game.prototype._assignEventsToKeys = function(){
 }
 
 
-Game.prototype._checkGravity = function(arr){
-
+Game.prototype._checkGravity = function(){
   for (var columnIndex=0; columnIndex<16; columnIndex++){
-     
     for(var rowIndex=0; rowIndex<16;rowIndex++){
-      if ((arr[rowIndex])[columnIndex] === 'p' ){
-        while ((arr[rowIndex +1 ])[columnIndex] === 0){ 
-        arr[rowIndex][columnIndex]= 0
-        arr[rowIndex +1][columnIndex]='p';
-        
+      if ((this.map[rowIndex])[columnIndex] === 'p' ){
+        while ((this.map[rowIndex +1 ])[columnIndex] === 0){ 
+        this.map[rowIndex][columnIndex]= 0
+        this.map[rowIndex +1][columnIndex]='p';
         this.update();
-        
-      } 
-    }};
-    
+        } 
+      }
+    }
+  }
+}
 
-}}
 
-
-Game.prototype._moveColumnUp = function (column, map){
- 
+Game.prototype._moveColumnUp = function (column){
   for (var rowIndex = 0; rowIndex<16 ; rowIndex++){
-     if(map[rowIndex][column] === x){
-       map[rowIndex][column]= 0
-       map[rowIndex-1][column]=x;
-       this.update();}}
-  
+    if(this.map[rowIndex][column] === x){
+       this.map[rowIndex][column]= 0
+       this.map[rowIndex-1][column]=x;
+       this.update();
+    }
+  }
 };
+
 /*
 function Game(options){
  this.astronaut = undefined; //
