@@ -1,5 +1,7 @@
 var x = undefined;
-var p = undefined;
+var p = 'p';
+var g = 'g';
+var gemsMap1 = 2;
 //mapa 1 
 var map1 =
 [//2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,2
@@ -14,24 +16,22 @@ var map1 =
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,x,x],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,x,x],
 [0,0,0,0,0,0,0,0,0,0,0,0,0,0,x,x],
-[0,0,0,0,0,0,0,0,0,0,0,0,0,0,x,x],
+[g,0,0,0,0,0,0,0,0,0,0,0,0,0,x,x],
 [x,x,x,x,0,0,0,0,0,0,0,0,0,0,x,x],
-[x,x,x,x,0,0,0,0,0,0,0,0,0,0,x,x],
+[x,x,x,x,0,0,0,0,0,0,0,0,0,g,x,x],
 [x,x,x,x,0,0,0,0,0,0,0,0,x,x,x,x],
 [x,x,x,x,0,0,0,0,0,0,0,0,x,x,x,x],
 ]
-
 
 window.onload = function(){
   var canvas = document.getElementById('map');
   var ctx = canvas.getContext('2d');
   var game = new Game({
     ctx: ctx,
-    map: map1,
+    map: map1.slice(),
     canvas: canvas,
     movementImput: 'l',
     sizeIndex : 40,
-    
   });
 
   game.start();
