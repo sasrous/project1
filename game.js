@@ -1,17 +1,26 @@
 function Game(options) {
 	this.ctx = options.ctx;
-	this.originalMap = options.map.slice();
-	this.map = options.map.slice();
+	this.originalMap = copy(map1);
+	this.map = options.map;
 	this.canvas = options.canvas;
 	this.movementImput = options.movementImput;
-	this.sizeIndex = options.sizeIndex;
+  this.sizeIndex = options.sizeIndex;
+  this.x = options.x;
+  this.p = options.p;
+  this.g = options.g; 
+  this.totalGems = options.totalGems;
+  this.collectedGems = options.collectedGems;
+  this.mapcount = options.mapcount;
+    
 }
 
 Game.prototype.update = function update() {
 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //clean canvas
 	this._drawSurface();
 	this._drawPJ();
-	this._drawGems();
+  this._drawGems();
+  this._gemCount();
+  
 };
 
 Game.prototype.start = function() {
@@ -19,13 +28,14 @@ Game.prototype.start = function() {
 	this._drawSurface();
 	this._drawPJ();
 	this._assignEventsToKeys();
-	this._drawGems();
+  this._drawGems();
+  this._gemCount();
 };
 
 Game.prototype._drawSurface = function() {
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-			if (this.map[rowIndex][columnIndex] === x) {
+			if (this.map[rowIndex][columnIndex] === this.x) {
 				this.ctx.fillStyle = this.ctx.createPattern(renders.surfaceTexture, 'repeat');
 				this.ctx.fillRect(
 					columnIndex * this.sizeIndex,
@@ -41,7 +51,7 @@ Game.prototype._drawSurface = function() {
 Game.prototype._drawGems = function() {
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-			if (this.map[rowIndex][columnIndex] === 'g') {
+			if (this.map[rowIndex][columnIndex] === this.g) {
 				//this.ctx.fillStyle = 'green';
 				this.ctx.drawImage(
 					renders.gemTexture,
@@ -58,7 +68,7 @@ Game.prototype._drawGems = function() {
 Game.prototype._drawPJ = function() {
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-			if (this.map[rowIndex][columnIndex] === 'p') {
+			if (this.map[rowIndex][columnIndex] === this.p) {
 				//this.ctx.fillStyle = 'blue';
 				this.ctx.drawImage(
 					renders.PJTexture,
@@ -79,9 +89,9 @@ Game.prototype._PJmove = function() {
 			for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 				for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
 					//find the PJ and check if there is space to move left
-					if (this.map[rowIndex][columnIndex] === 'p' && this.map[rowIndex][columnIndex - 1] != x) {
+					if (this.map[rowIndex][columnIndex] === this.p && this.map[rowIndex][columnIndex - 1] != this.x) {
 						this.map[rowIndex][columnIndex] = 0; //delete the PJ from current position
-						this.map[rowIndex][columnIndex - 1] = 'p'; //move PJ to new position
+						this.map[rowIndex][columnIndex - 1] = this.p; //move PJ to new position
 						this._checkGravity();
 						this._checkFall();
 						this.update(); //paint current map status
@@ -94,9 +104,9 @@ Game.prototype._PJmove = function() {
 		case 'r':
 			for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 				for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-					if (this.map[rowIndex][columnIndex] === 'p' && this.map[rowIndex][columnIndex + 1] != x) {
+					if (this.map[rowIndex][columnIndex] === this.p && this.map[rowIndex][columnIndex + 1] != this.x) {
 						this.map[rowIndex][columnIndex] = 0;
-						this.map[rowIndex][columnIndex + 1] = 'p';
+						this.map[rowIndex][columnIndex + 1] = this.p;
 						this._checkGravity();
 						this._checkFall();
 						this.update(); //paint current map status
@@ -110,21 +120,21 @@ Game.prototype._PJmove = function() {
 			for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 				for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
           
-					if (this.map[rowIndex][columnIndex] === 'p') {
-            if (this.map[0][columnIndex] === x){
+					if (this.map[rowIndex][columnIndex] === this.p) {
+            if (this.map[0][columnIndex] === this.x){
               this.map[0][columnIndex] = 0;
             }
             if (rowIndex === 0){
               this._moveColumnUp(columnIndex);
               this.update();
               setTimeout(function() {
-                window.alert('YOU DIED');
+                $(".dead-screen").removeClass("hidden");
                 this._reset();
               }.bind(this), 500);
             }
             else {
               this._moveColumnUp(columnIndex); //move row up
-              this.map[rowIndex - 1][columnIndex] = 'p'; // move PJ up
+              this.map[rowIndex - 1][columnIndex] = this.p; // move PJ up
               this.update(); //paint current map status
               return;
             }
@@ -163,7 +173,10 @@ Game.prototype._assignEventsToKeys = function() {
 
 			case 39: //arrow right
 				this.goRight();
-				break;
+        break;
+      case 82: //R key
+				this._reset();
+			break;
 		}
 	}.bind(this);
 };
@@ -171,12 +184,16 @@ Game.prototype._assignEventsToKeys = function() {
 Game.prototype._checkGravity = function() {
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-			if (this.map[rowIndex][columnIndex] === 'p') {
-				while (this.map[rowIndex + 1][columnIndex] === 0 || this.map[rowIndex + 1][columnIndex] === g) {
+			if (this.map[rowIndex][columnIndex] === this.p) {
+        if (rowIndex +1 === 16){
+          return
+        }
+				else {while (this.map[rowIndex + 1][columnIndex] === 0 || this.map[rowIndex + 1][columnIndex] === this.g) {
 					this.map[rowIndex][columnIndex] = 0;
-					this.map[rowIndex + 1][columnIndex] = 'p';
+					this.map[rowIndex + 1][columnIndex] = this.p;
 					this.update();
-					this._checkFall();
+          this._checkFall();
+        }
 				}
 			}
 		}
@@ -185,13 +202,16 @@ Game.prototype._checkGravity = function() {
 Game.prototype._checkFall = function() {
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-			if (this.map[rowIndex][columnIndex] === 'p') {
+			if (this.map[rowIndex][columnIndex] === this.p) {
 				if (rowIndex + 1 === 16) {
 					// console.log('you died');
 					setTimeout(function() {
-            window.alert('YOU DIED');
+            $(".dead-screen").removeClass("hidden");
             this._reset();
-					}.bind(this), 500);
+            
+          }.bind(this), 500);
+          
+          
 					
 				}
 			}
@@ -199,246 +219,60 @@ Game.prototype._checkFall = function() {
 	}
 };
 
-Game.prototype._reset = function(map1Clone) {
-  this.map = this.originalMap.slice();
-  console.log("original", this.originalMap);
-  console.log("map", this.map);
+Game.prototype._reset = function() {
+  this.map = copy(this.originalMap);
+  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //clean canvas
+	this._drawSurface();
+	this._drawPJ();
+  this._drawGems();
+  setTimeout(function() {
+    $(".dead-screen").addClass("hidden");
+    
+  }.bind(this), 1000);
+  
 	this.start();
 };
 
 Game.prototype._moveColumnUp = function(column) {
 	for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-		if (this.map[rowIndex][column] === 'g') {
+		if (this.map[rowIndex][column] === this.g) {
 			this.map[rowIndex][column] = 0;
-			this.map[rowIndex - 1][column] = g;
+			this.map[rowIndex - 1][column] = this.g;
 			this.update();
-		} else if (this.map[rowIndex][column] === x) {
+		} else if (this.map[rowIndex][column] === this.x) {
 			this.map[rowIndex][column] = 0;
-			this.map[rowIndex - 1][column] = x;
+			this.map[rowIndex - 1][column] = this.x;
 			this.update();
 		}
 	}
 };
 
-/*
-function Game(options){
- this.astronaut = undefined; //
- this.rows = options.rows;
- this.columns = options.columns;
- this.ctx = options.ctx;
- this.gems = undefined;
-}
-
-Game.prototype._drawBoard = function (){
- for (var columnIndex = 0; columnIndex < this.columns; columnIndex++){
-   for (var rowIndex = 0; rowIndex < this.rows; rowIndex++){
-   
-    this.ctx.fillStyle = this.ctx.createPattern(renders.backgroundTexture, 'repeat');
-    this.ctx.fillRect(columnIndex * 20, rowIndex  * 20, 20, 20);
-   }
- }
-}
-
-Game.prototype._drawSurface = function(arr){ 
-for (var columnIndex=0; columnIndex< this.columns; columnIndex++){
- 
- for(var rowIndex=0; rowIndex<arr.lenght ;rowIndex++){
-   
-   if ((arr[rowIndex])[columnIndex] !== 0){
-     
-
-    
-     this.ctx.fillStyle = this.ctx.createPattern(renders.surfaceTexture, 'repeat');
-     this.ctx.fillRect(columnIndex * 20, rowIndex  * 20, 20, 20);
-
-   } 
- }
-}
-}
-
-Game.prototype.start = function (){
- this._drawBoard();
- this._drawSurface(map1);
- this._drawPJ(PJmap1);
- this._assignEventsToKeys();
-
-}
-
-
-Game.prototype._moveColumnUp = function (column, map, ){
- 
-  
-  //  for (var rowIndex = 0; rowIndex<20 ; rowIndex++){
-  //    console.log("hello2")
-     
-  //   if(map[rowIndex][column] === x){
-  //     console.log("hello")
-  //     map[rowIndex][column]= 0
-  //     map[rowIndex][column + 1]= 0
-
-  //     map[rowIndex-1][column]=x;
-  //     map[rowIndex-1][column +1]=x;
-  //     map[rowIndex-2][column]=x; 
-  //     map[rowIndex-2][column +1]=x;
-  
-  //   this._drawSurface(map1);
-  //   this._drawPJ(PJmap1);
-  
-    
-  //   }
-  // }
-  // for (var rowIndex = 0; rowIndex<20 ; rowIndex++){
-  //   console.log("hello2")
-    
-  //  if(PJmap1[rowIndex][column] === x){
-  //    console.log("hello")
-  //    PJmap1[rowIndex][column]= 0
-    
-
-  //    PJmap1[rowIndex-1][column]=x;
-     
- 
-  //  this._drawSurface(map1);
-  //  this._drawPJ(PJmap1);}
-};
-  
-  Game.prototype._drawPJ = function(arr){ 
-    for (var columnIndex=0; columnIndex<10; columnIndex++){
-     
-     for(var rowIndex=0; rowIndex<10;rowIndex++){
-       if ((arr[rowIndex])[columnIndex] === 'p'){
-         
-        
-         this.ctx.fillStyle = 'blue';
-         this.ctx.fillRect(columnIndex * 40, rowIndex  * 40, 40, 40);
-         
-    
-       } 
-     }
+Game.prototype._gemCount = function(){
+  var count = 0
+  for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
+		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
+			if (this.map[rowIndex][columnIndex] === this.g) {
+        count++;
+      }
     }
-    }
-
-var movementImput = 'l'
-
-Game.prototype._PJmove = function(arr){
-switch (movementImput){
-case 'l': 
-for (var columnIndex=0; columnIndex<10; columnIndex++){
-     
-  for(var rowIndex=0; rowIndex<10;rowIndex++){
-    if ((arr[rowIndex])[columnIndex] === 'p' && ((arr[rowIndex])[columnIndex - 1] != x )){
-      PJmap1[rowIndex][columnIndex]= 0
-      PJmap1[rowIndex][columnIndex - 1]='p'
-      this._checkGravity(PJmap1);
-      this.ctx.fillStyle = this.ctx.createPattern(renders.backgroundTexture, 'repeat');
-      this.ctx.fillRect(columnIndex * 40, rowIndex  * 40, 40, 40)
-       this._drawPJ(PJmap1);
-       return
-    } 
-  }} break;
-
-
-case'r': 
-for (var columnIndex=0; columnIndex<10; columnIndex++){
-     
-  for(var rowIndex=0; rowIndex<10;rowIndex++){
-    if ((arr[rowIndex])[columnIndex] === 'p' && ((arr[rowIndex])[columnIndex + 1] != x )){
-      PJmap1[rowIndex][columnIndex]= 0
-      PJmap1[rowIndex][columnIndex + 1]='p'
-      this._checkGravity(PJmap1);
-      this.ctx.fillStyle = this.ctx.createPattern(renders.backgroundTexture, 'repeat');
-      this.ctx.fillRect(columnIndex * 40, rowIndex  * 40, 40, 40)
-       this._drawPJ(PJmap1);
-       
-      return
-    } 
-  }} break;
-  
-case 'up': 
-for (var columnIndex=0; columnIndex<10; columnIndex++){
-for(var rowIndex=0; rowIndex<10;rowIndex++){
-  if ((arr[rowIndex])[columnIndex] === 'p' && ((arr[rowIndex -1 ])[columnIndex] != x )){
-    this._moveColumnUp(columnIndex, map1);
-    PJmap1[rowIndex][columnIndex]= 0
-    PJmap1[rowIndex-1][columnIndex]='p'
-this.ctx.fillStyle = this.ctx.createPattern(renders.backgroundTexture, 'repeat');
-this.ctx.fillRect(columnIndex * 40, rowIndex  * 40, 40, 40)
-
-this._drawSurface(map1);
-this._drawPJ(PJmap1);
+  }
+  this.collectedGems = this.totalGems - count;
+  $('div.gem-count').html(`<p>${this.collectedGems}/${this.totalGems}</p>`);
+  if (count === 0) {
+    this._nextstage();
+    console.log("next stage");
+    
+    return true;
   }
 }
+
+Game.prototype._nextstage = function() {
+  if (this.mapcount === 1) {
+    this.map = copy(map2);
+    this.originalMap = copy(map2);
+    this.totalGems = gemsMap2;
+    this.mapcount = 2;
+    this.update();
+    console.log(this.map);
+  } 
 }
-break;
-
-this._drawSurface(map1);
-this._drawPJ(PJmap1);
-
-}
-
-}
-
-
-
-Game.prototype.goUp = function (){
-  
-  movementImput = 'up';
-  this._PJmove(PJmap1);
-  
-  }
-
-Game.prototype.goLeft = function (){
-  
-    movementImput = 'l';
-    this._PJmove(PJmap1);
-  }
-  
-Game.prototype.goRight = function (){
-
-  movementImput = 'r';
-  this._PJmove(PJmap1);
-    }
- 
-Game.prototype._assignEventsToKeys = function(){
-  
-  document.onkeydown = function (e){
-    
-    switch (e.keyCode){
-      case 38: //arrow up 
-      this.goUp();
-      
-      break;
-     
-      case 37: //arrow left
-      this.goLeft();
-      break;
-      case 39: //arrow right
-      this.goRight();
-      break;
-  
-    }
-  }.bind(this);
-}
-
-
-Game.prototype._checkGravity = function(arr){
-
-  for (var columnIndex=0; columnIndex<10; columnIndex++){
-     
-    for(var rowIndex=0; rowIndex<10;rowIndex++){
-      if ((arr[rowIndex])[columnIndex] === 'p' ){
-        while ((arr[rowIndex +1 ])[columnIndex] === 0){ 
-        PJmap1[rowIndex][columnIndex]= 0
-        PJmap1[rowIndex +1][columnIndex]='p'
-
-        this.ctx.fillStyle = this.ctx.createPattern(renders.backgroundTexture, 'repeat');
-        this.ctx.fillRect(columnIndex * 40, rowIndex  * 40, 40, 40)
-         this._drawPJ(PJmap1);}
-        
-      } 
-    }};
-    
-
-}
-
-*/
