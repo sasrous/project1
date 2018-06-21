@@ -14,15 +14,6 @@ function Game(options) {
     
 }
 
-Game.prototype.update = function update() {
-	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //clean canvas
-	this._drawSurface();
-	this._drawPJ();
-  this._drawGems();
-  this._gemCount();
-  
-};
-
 Game.prototype.start = function() {
 	// this.map = this.orignalMap.slice();
 	this._drawSurface();
@@ -30,6 +21,7 @@ Game.prototype.start = function() {
 	this._assignEventsToKeys();
   this._drawGems();
   this._gemCount();
+  this._assignControls();
 };
 
 Game.prototype._drawSurface = function() {
@@ -68,7 +60,7 @@ Game.prototype._drawGems = function() {
 Game.prototype._drawPJ = function() {
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-			if (this.map[rowIndex][columnIndex] === this.p) {
+			if (this.map[rowIndex][columnIndex] === 'p') {
 				//this.ctx.fillStyle = 'blue';
 				this.ctx.drawImage(
 					renders.PJTexture,
@@ -79,8 +71,8 @@ Game.prototype._drawPJ = function() {
 				);
 				// this.ctx.fillRect(columnIndex * this.sizeIndex, rowIndex  * this.sizeIndex, this.sizeIndex, this.sizeIndex);
 			}
-		}
-	}
+		};
+	};
 };
 
 Game.prototype._PJmove = function() {
@@ -191,7 +183,7 @@ Game.prototype._checkGravity = function() {
 				else {while (this.map[rowIndex + 1][columnIndex] === 0 || this.map[rowIndex + 1][columnIndex] === this.g) {
 					this.map[rowIndex][columnIndex] = 0;
 					this.map[rowIndex + 1][columnIndex] = this.p;
-					this.update();
+					//this.update();
           this._checkFall();
         }
 				}
@@ -210,7 +202,6 @@ Game.prototype._checkFall = function() {
             this._reset();
             
           }.bind(this), 500);
-          
           
 					
 				}
@@ -260,19 +251,72 @@ Game.prototype._gemCount = function(){
   $('div.gem-count').html(`<p>${this.collectedGems}/${this.totalGems}</p>`);
   if (count === 0) {
     this._nextstage();
-    console.log("next stage");
-    
-    return true;
+
   }
 }
 
 Game.prototype._nextstage = function() {
   if (this.mapcount === 1) {
-    this.map = copy(map2);
-    this.originalMap = copy(map2);
-    this.totalGems = gemsMap2;
-    this.mapcount = 2;
-    this.update();
-    console.log(this.map);
+    this._loadStage(map2, gemsMap2) 
   } 
+  else if (this.mapcount === 2) {
+    this._loadStage(map3, gemsMap3)
+  }
+  else if (this.mapcount === 3) {
+    this._loadStage(map4, gemsMap4)
+  }
 }
+
+Game.prototype._loadStage = function(map, gemsmap) {
+  this.map = copy(map);
+  this.originalMap = copy(map);
+  this.totalGems = gemsmap;
+  this.mapcount++;
+  this.update();
+}
+Game.prototype._changeStage = function(map, gemsmap, lvl) {
+  this.map = copy(map);
+  this.originalMap = copy(map);
+  this.totalGems = gemsmap;
+  this.mapcount = lvl;
+  this.update();
+}
+
+Game.prototype._assignControls = function(){
+  $( "#menubtn" ).click(function() {
+    $( "div.lvl-menu" ).toggleClass( "hidden" );
+});
+
+
+  $( "#lvl1" ).click(function() { 
+    this._changeStage(map1, gemsMap1, 1);
+    $( "div.lvl-menu" ).toggleClass( "hidden" );
+  }.bind(this));
+  $( "#lvl2" ).click(function() {
+    this._changeStage(map2, gemsMap2, 2);
+    $( "div.lvl-menu" ).toggleClass( "hidden" );
+  }.bind(this));
+  $( "#lvl3" ).click(function() {
+    this._changeStage(map3, gemsMap3, 3);
+    $( "div.lvl-menu" ).toggleClass( "hidden" );
+  }.bind(this));
+  $( "#lvl4" ).click(function() {
+    this._changeStage(map4, gemsMap4, 4);
+    $( "div.lvl-menu" ).toggleClass( "hidden" );
+  }.bind(this));
+
+}
+
+
+
+
+
+Game.prototype.update = function update() {
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //clean canvas
+  this._drawPJ();
+	this._drawSurface();
+  this._drawGems();
+  this._gemCount();
+};
+
+
