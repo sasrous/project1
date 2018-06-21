@@ -8,6 +8,7 @@ function Game(options) {
   this.x = options.x;
   this.p = options.p;
   this.g = options.g; 
+  this.y = options.y;
   this.totalGems = options.totalGems;
   this.collectedGems = options.collectedGems;
   this.mapcount = options.mapcount;
@@ -29,6 +30,15 @@ Game.prototype._drawSurface = function() {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
 			if (this.map[rowIndex][columnIndex] === this.x) {
 				this.ctx.fillStyle = this.ctx.createPattern(renders.surfaceTexture, 'repeat');
+				this.ctx.fillRect(
+					columnIndex * this.sizeIndex,
+					rowIndex * this.sizeIndex,
+					this.sizeIndex,
+					this.sizeIndex
+				);
+      }
+      else if (this.map[rowIndex][columnIndex] === this.y) {
+				this.ctx.fillStyle = 'red';
 				this.ctx.fillRect(
 					columnIndex * this.sizeIndex,
 					rowIndex * this.sizeIndex,
@@ -81,7 +91,7 @@ Game.prototype._PJmove = function() {
 			for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 				for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
 					//find the PJ and check if there is space to move left
-					if (this.map[rowIndex][columnIndex] === this.p && this.map[rowIndex][columnIndex - 1] != this.x) {
+					if (this.map[rowIndex][columnIndex] === this.p && this.map[rowIndex][columnIndex - 1] != this.x && this.map[rowIndex][columnIndex - 1] != this.y) {
 						this.map[rowIndex][columnIndex] = 0; //delete the PJ from current position
 						this.map[rowIndex][columnIndex - 1] = this.p; //move PJ to new position
 						this._checkGravity();
@@ -96,7 +106,7 @@ Game.prototype._PJmove = function() {
 		case 'r':
 			for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 				for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
-					if (this.map[rowIndex][columnIndex] === this.p && this.map[rowIndex][columnIndex + 1] != this.x) {
+					if (this.map[rowIndex][columnIndex] === this.p && this.map[rowIndex][columnIndex + 1] != this.x && this.map[rowIndex][columnIndex + 1] != this.y) {
 						this.map[rowIndex][columnIndex] = 0;
 						this.map[rowIndex][columnIndex + 1] = this.p;
 						this._checkGravity();
@@ -113,7 +123,13 @@ Game.prototype._PJmove = function() {
 				for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
           
 					if (this.map[rowIndex][columnIndex] === this.p) {
-            if (this.map[0][columnIndex] === this.x){
+            if (this.map[0][columnIndex]=== this.g) {
+              setTimeout(function() {
+              $(".dead-screen").removeClass("hidden");
+              this._reset();
+            }.bind(this), 500);} //checks if any gem goes off map 
+
+            if (this.map[0][columnIndex] === this.x || this.map[0][columnIndex] === this.y  || this.map[0][columnIndex] === this.g ){
               this.map[0][columnIndex] = 0;
             }
             if (rowIndex === 0){
@@ -124,7 +140,7 @@ Game.prototype._PJmove = function() {
                 this._reset();
               }.bind(this), 500);
             }
-            else {
+            else if (this.map[rowIndex +1][columnIndex] === this.x) { // checks if the PJ is in a "normal" tile
               this._moveColumnUp(columnIndex); //move row up
               this.map[rowIndex - 1][columnIndex] = this.p; // move PJ up
               this.update(); //paint current map status
@@ -133,12 +149,56 @@ Game.prototype._PJmove = function() {
 					}
 				}
 			}
-			break;
+      break;
+
+	case 'down':
+		for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
+			for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
+          
+				if (this.map[rowIndex][columnIndex] === this.p) {
+          if (this.map[15][columnIndex] === this.g || this.map[15][columnIndex] === this.y  ) {
+            setTimeout(function() {
+            $(".dead-screen").removeClass("hidden");
+            this._reset();
+          }.bind(this), 500);
+          return}
+
+          if (this.map[rowIndex + 1][columnIndex] === this.y) {
+            if (this.map[15][columnIndex] === this.x || this.map[15][columnIndex] === this.y || this.map[0][columnIndex] === this.g ){
+              this.map[15][columnIndex] = 0; // delete floor or gems if they go off map 
+            }
+            if (rowIndex === 14){
+              this._moveColumnDown(columnIndex);
+              this.map[rowIndex][columnIndex] = 0 // delete PJ 
+              this.map[rowIndex +1][columnIndex] = this.p; // move PJ down
+              this.update();
+              setTimeout(function() {
+                $(".dead-screen").removeClass("hidden");
+                this._reset();
+              }.bind(this), 500);
+            }
+            else {
+              this.map[rowIndex][columnIndex] = 0 // delete PJ 
+              this._moveColumnDown(columnIndex); //move row down
+              this.map[rowIndex +1][columnIndex] = this.p; // move PJ down
+              this.update(); //paint current map status
+              return;
+            }
+          }
+        }
+			}
+		}
+		break;
 	}
 };
 
 Game.prototype.goUp = function() {
 	this.movementImput = 'up';
+	this._PJmove();
+};
+
+Game.prototype.goDown = function() {
+	this.movementImput = 'down';
 	this._PJmove();
 };
 
@@ -155,6 +215,10 @@ Game.prototype.goRight = function() {
 Game.prototype._assignEventsToKeys = function() {
 	document.onkeydown = function(e) {
 		switch (e.keyCode) {
+      case 40: //arrow down
+				this.goDown();
+        break;
+        
 			case 38: //arrow up
 				this.goUp();
 				break;
@@ -166,9 +230,10 @@ Game.prototype._assignEventsToKeys = function() {
 			case 39: //arrow right
 				this.goRight();
         break;
+
       case 82: //R key
 				this._reset();
-			break;
+			  break;
 		}
 	}.bind(this);
 };
@@ -229,10 +294,36 @@ Game.prototype._moveColumnUp = function(column) {
 		if (this.map[rowIndex][column] === this.g) {
 			this.map[rowIndex][column] = 0;
 			this.map[rowIndex - 1][column] = this.g;
+      this.update();
+    }
+    else if (this.map[rowIndex][column] === this.y) {
+			this.map[rowIndex][column] = 0;
+			this.map[rowIndex - 1][column] = this.y;
 			this.update();
-		} else if (this.map[rowIndex][column] === this.x) {
+    }
+    else if (this.map[rowIndex][column] === this.x) {
 			this.map[rowIndex][column] = 0;
 			this.map[rowIndex - 1][column] = this.x;
+			this.update();
+		}
+	}
+};
+Game.prototype._moveColumnDown = function(column) {
+	for (var rowIndex = 15; rowIndex >= 0; rowIndex--) {
+    
+		if (this.map[rowIndex][column] === this.g) {
+			this.map[rowIndex][column] = 0;
+			this.map[rowIndex + 1][column] = this.g;
+      this.update();
+    }
+    else if (this.map[rowIndex][column] === this.y) {
+			this.map[rowIndex][column] = 0;
+			this.map[rowIndex + 1][column] = this.y;
+			this.update();
+    }
+     else if (this.map[rowIndex][column] === this.x) {
+			this.map[rowIndex][column] = 0;
+			this.map[rowIndex + 1][column] = this.x;
 			this.update();
 		}
 	}
@@ -264,6 +355,9 @@ Game.prototype._nextstage = function() {
   }
   else if (this.mapcount === 3) {
     this._loadStage(map4, gemsMap4)
+  }
+  else if (this.mapcount === 4) {
+    this._loadStage(map5, gemsMap5)
   }
 }
 
@@ -304,7 +398,10 @@ Game.prototype._assignControls = function(){
     this._changeStage(map4, gemsMap4, 4);
     $( "div.lvl-menu" ).toggleClass( "hidden" );
   }.bind(this));
-
+  $( "#lvl5" ).click(function() {
+    this._changeStage(map5, gemsMap5, 5);
+    $( "div.lvl-menu" ).toggleClass( "hidden" );
+  }.bind(this));
 }
 
 

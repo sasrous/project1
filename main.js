@@ -1,12 +1,14 @@
 
 
-var x = undefined;
+var x = x;
+var y = 'y';
 var p = 'p';
 var g = 'g';
 var gemsMap1 = 2;
 var gemsMap2 = 9;
 var gemsMap3 = 3;
 var gemsMap4 = 8;
+var gemsMap5 = 8;
 var collectedGems = 0;
 //mapa 1 
 var map1 =
@@ -84,6 +86,25 @@ var map2 =
     [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x],
     [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x]]
 
+   var map5 =
+  [  //2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,
+    [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x],//rows
+    [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x],
+    [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x],
+    [x,0,0,0,0,0,0,0,0,0,0,0,0,0,x,x],
+    [x,'p',0,0,0,0,0,0,0,0,0,0,0,0,x,x],
+    [x,x,x,y,y,y,y,y,y,y,y,y,y,x,x,x],
+    [x,x,x,x,x,g,0,0,0,0,g,x,x,x,x,x],
+    [x,x,x,x,x,0,x,y,y,x,0,x,x,x,x,x],
+    [x,x,x,x,x,g,0,0,0,0,g,x,x,x,x,x],
+    [x,x,x,x,x,x,y,x,x,y,x,x,x,x,x,x],
+    [x,x,x,x,x,g,0,0,0,0,g,x,x,x,x,x],
+    [x,x,x,x,x,x,x,y,y,x,x,x,x,x,x,x],
+    [x,x,x,x,x,g,0,0,0,0,g,x,x,x,x,x],
+    [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x],
+    [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x],
+    [x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x]]
+
 
 window.onload = function(){
   var canvas = document.getElementById('map');
@@ -94,6 +115,7 @@ window.onload = function(){
     canvas: canvas,
     movementImput: 'l',
     sizeIndex : 40,
+    y: y,
     x: x,
     p: p,
     g: g,
