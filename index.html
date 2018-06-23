@@ -8,7 +8,18 @@
   <title>Document</title>
 </head>
 <body>
-  <div class = "main">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400" rel="stylesheet">
+
+  
+  <div class="hidethis intro-screen">
+      <img src="/INTRO IMAGE.png" id="intro-screen">
+      <button class="button button1" id = "startbtn">START</button>
+      
+  </div>
+  <div>
+      <img src="bob-intro2.gif" class="hidden" id="bob-intro" >
+  </div>
+  <div class = "main hidden">
   <img src="Screen.jpg.png" id="surface" class="hidden">
   <img src="deep-space.png" id="space" class="hidden">
   <img src="background1.png" id="background1" class="hidden">
@@ -25,18 +36,32 @@
   </div>
   <div class = "aside" >
     <div class= "gem-count"></div>
-    <div class= "reset-text">press R to reset</div>
+    <div class= "reset-text">Help BOB get home safe <br>
+      <br>
+      <br>
+      press  R to reset</div>
     <button class="button button2" id = "menubtn" >MENU</button>
   </div>
+  <footer class = "text-box" id = "text-box">
+      <div  class="footer-text" id="text1" >
+
+
+
+      </div>
+  </footer>
   <script
   src="https://code.jquery.com/jquery-3.3.1.slim.js"
   integrity="sha256-fNXJFIlca05BIO2Y5zh1xrShK3ME+/lYZ0j+ChxX2DA="
   crossorigin="anonymous"></script>
+  <script src="./intro.js"></script>
+  <script src="./text-sheet.js"></script>
   <script src="./main.js"></script>
   <script src="./renders.js"></script>
   <script src="./game.js"></script>
 
   </div>
+  <embed name="GoodEnough" src="Best of Turbo Knight  Best of Synthwave And Retro Electro Music Mix (1).mp3 loop="true" hidden="true" autostart="true">
+  
 </body>
 
 </html>

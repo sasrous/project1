@@ -1,7 +1,8 @@
 
 * {
   background-color: black;
-
+ font-family: 'Roboto Mono', monospace;
+ margin-top: 30px;
  
 }
 /* body {
@@ -38,7 +39,7 @@ canvas {
   position:  absolute;
   /* justify-content: center; */
   font-size: 250px;
-  font-family: Arial, Helvetica, sans-serif;
+  
   margin-right: 50px;
 }
 .lvl-menu {
@@ -51,7 +52,7 @@ canvas {
   display: flex;
   justify-content: space-around;
   font-size: 250px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Roboto Mono', monospace;
   margin-right: 50px;
   flex-wrap: wrap;
 }
@@ -60,13 +61,13 @@ canvas {
 .gem-count {
   font-size: 40px;
   color: springgreen;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Roboto Mono', monospace;
 }
 
 .reset-text {
-  font-size: 30px;
+  font-size: 25px;
   color: springgreen;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Roboto Mono', monospace;
   
 }
 .aside {
@@ -113,3 +114,48 @@ canvas {
   display: none;
   }
   
+.text-box {
+  
+  height: 160px;
+  width: 640px;
+  position: absolute;
+  margin-top: 630px;
+  color: white;
+}
+#text1 {
+  height: 170px;
+  width: 605px;
+  border: solid springgreen;
+}
+.intro-screen {
+  margin-left:  50px;
+  margin-right: 50px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  margin-top: 20px;
+
+}
+
+#startbtn {
+  position: absolute;
+  margin-top: 510px;
+}
+
+#bob-intro {
+  margin-top: 60px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-text {
+  color: white;
+  font-size: 25px;
+  letter-spacing: 1.5px;
+  padding: 15px;
+
+}
+
+footer {
+  color: white;
+}

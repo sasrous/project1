@@ -1,6 +1,6 @@
 function Game(options) {
 	this.ctx = options.ctx;
-	this.originalMap = copy(map1);
+	this.originalMap = copy(mapintro);
 	this.map = options.map;
 	this.canvas = options.canvas;
 	this.movementImput = options.movementImput;
@@ -19,10 +19,13 @@ Game.prototype.start = function() {
 	// this.map = this.orignalMap.slice();
 	this._drawSurface();
 	this._drawPJ();
-	this._assignEventsToKeys();
   this._drawGems();
   this._gemCount();
   this._assignControls();
+  this._assignEventsToKeys();
+
+
+  
 };
 
 Game.prototype._drawSurface = function() {
@@ -93,7 +96,8 @@ Game.prototype._PJmove = function() {
 					//find the PJ and check if there is space to move left
 					if (this.map[rowIndex][columnIndex] === this.p && this.map[rowIndex][columnIndex - 1] != this.x && this.map[rowIndex][columnIndex - 1] != this.y) {
 						this.map[rowIndex][columnIndex] = 0; //delete the PJ from current position
-						this.map[rowIndex][columnIndex - 1] = this.p; //move PJ to new position
+            this.map[rowIndex][columnIndex - 1] = this.p; //move PJ to new position
+            
 						this._checkGravity();
 						this._checkFall();
 						this.update(); //paint current map status
@@ -193,6 +197,12 @@ Game.prototype._PJmove = function() {
 };
 
 Game.prototype.goUp = function() {
+  if (stringCount === 8 && finished === true ){ 
+    finished = false
+    $("#text1").empty();   
+    displayOnScreen("#text1", textArray[stringCount], 0, textspeed);   
+  }
+  
 	this.movementImput = 'up';
 	this._PJmove();
 };
@@ -213,15 +223,18 @@ Game.prototype.goRight = function() {
 };
 
 Game.prototype._assignEventsToKeys = function() {
+  
 	document.onkeydown = function(e) {
+  if (block === false){
 		switch (e.keyCode) {
       case 40: //arrow down
 				this.goDown();
         break;
-        
-			case 38: //arrow up
-				this.goUp();
-				break;
+      
+      case 38: //arrow up
+        if (blockUp === false){
+				this.goUp();}
+        break;
 
 			case 37: //arrow left
 				this.goLeft();
@@ -234,8 +247,10 @@ Game.prototype._assignEventsToKeys = function() {
       case 82: //R key
 				this._reset();
 			  break;
-		}
-	}.bind(this);
+    }
+  }
+  }.bind(this);
+
 };
 
 Game.prototype._checkGravity = function() {
@@ -285,7 +300,7 @@ Game.prototype._reset = function() {
     $(".dead-screen").addClass("hidden");
     
   }.bind(this), 1000);
-  
+  this._assignControls();
 	this.start();
 };
 
@@ -334,12 +349,14 @@ Game.prototype._gemCount = function(){
   for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
 			if (this.map[rowIndex][columnIndex] === this.g) {
-        count++;
+        count++
       }
     }
   }
   this.collectedGems = this.totalGems - count;
+  if (count === 1){firstGemFound = true; narrator(textArray)}
   $('div.gem-count').html(`<p>${this.collectedGems}/${this.totalGems}</p>`);
+
   if (count === 0) {
     this._nextstage();
 
@@ -348,15 +365,19 @@ Game.prototype._gemCount = function(){
 
 Game.prototype._nextstage = function() {
   if (this.mapcount === 1) {
+    this._loadStage(map1, gemsMap1) 
+  } 
+  else if (this.mapcount === 2 ) {
     this._loadStage(map2, gemsMap2) 
   } 
-  else if (this.mapcount === 2) {
+  else if (this.mapcount === 3) {
     this._loadStage(map3, gemsMap3)
   }
-  else if (this.mapcount === 3) {
+  else if (this.mapcount === 4) {
     this._loadStage(map4, gemsMap4)
   }
-  else if (this.mapcount === 4) {
+  else if (this.mapcount === 5) {
+    
     this._loadStage(map5, gemsMap5)
   }
 }
@@ -372,7 +393,7 @@ Game.prototype._changeStage = function(map, gemsmap, lvl) {
   this.map = copy(map);
   this.originalMap = copy(map);
   this.totalGems = gemsmap;
-  this.mapcount = lvl;
+  this.mapcount = lvl+1;
   this.update();
 }
 
@@ -402,6 +423,7 @@ Game.prototype._assignControls = function(){
     this._changeStage(map5, gemsMap5, 5);
     $( "div.lvl-menu" ).toggleClass( "hidden" );
   }.bind(this));
+  
 }
 
 
