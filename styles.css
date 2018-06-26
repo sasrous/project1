@@ -5,15 +5,7 @@
  margin-top: 30px;
  
 }
-/* body {
-  background-image: url("background1.png");
-  position: absolute;
-  height: 940px;
-  width: 1040px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-} */
+
 
 .main {
   display: flex;
@@ -26,7 +18,7 @@ canvas {
   background-image: url("deep-space.png");
   margin-left:  50px;
   margin-right: 50px;
-  
+ 
 
 }
 
@@ -101,14 +93,14 @@ canvas {
 
 .button1:hover {
   background-color: springgreen;
-  color: white;
+  color: black;
 }
 
 
 
 .button2:hover {
-  background-color: black; /* Green */
-  color: white;
+  background-color: springgreen; /* Green */
+  color: black;
 }
 .hidden{
   display: none;
@@ -158,4 +150,27 @@ canvas {
 
 footer {
   color: white;
+}
+
+#skipbtn {
+  position: absolute;
+  margin-top: -59px;
+  margin-left: 494px;
+  color: black;
+  font-size: 14px;
+  
+}
+
+.button2 {
+
+  background-color: springgreen;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  border-radius: 4px;
+  padding: 15px;
+
+  
 }

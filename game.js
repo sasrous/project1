@@ -160,7 +160,7 @@ Game.prototype._PJmove = function() {
 			for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
           
 				if (this.map[rowIndex][columnIndex] === this.p) {
-          if (this.map[15][columnIndex] === this.g || this.map[15][columnIndex] === this.y  ) {
+          if ((this.map[14][columnIndex] === this.g || this.map[14][columnIndex] === this.y) && this.map[13][columnIndex] === this.p ) {
             setTimeout(function() {
             $(".dead-screen").removeClass("hidden");
             this._reset();
@@ -377,7 +377,8 @@ Game.prototype._nextstage = function() {
     this._loadStage(map4, gemsMap4)
   }
   else if (this.mapcount === 5) {
-    
+		trigger = true;
+		narrator(textArray)
     this._loadStage(map5, gemsMap5)
   }
 }
@@ -421,7 +422,9 @@ Game.prototype._assignControls = function(){
   }.bind(this));
   $( "#lvl5" ).click(function() {
     this._changeStage(map5, gemsMap5, 5);
-    $( "div.lvl-menu" ).toggleClass( "hidden" );
+		$( "div.lvl-menu" ).toggleClass( "hidden" );
+		trigger = true;
+		narrator(textArray)
   }.bind(this));
   
 }
