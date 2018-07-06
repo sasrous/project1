@@ -129,9 +129,13 @@ Game.prototype._drawPJ = function() {
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
 			if (this.map[rowIndex][columnIndex] === 'p') {
-
-				 xcoordinates = 40 * columnIndex;
-				 ycoordinates = 40 * rowIndex;
+				xcoordinates = 40 * columnIndex;
+				ycoordinates = 40 * rowIndex;
+				if (rowIndex>0){
+					if (this.map[rowIndex -1][columnIndex] === this.x || this.map[rowIndex -1][columnIndex] === this.y){
+						var crouch = true;
+					}
+				}
 
 				
 				//  this.ctx.drawImage(
@@ -150,6 +154,7 @@ Game.prototype._drawPJ = function() {
 		width: 4000,
 		height: 6712,
 		image: renders.sprite,
+		image2: renders.crouch,
 		xcoordinates: xcoordinates,
 		ycoordinates: ycoordinates,
 	
@@ -164,7 +169,12 @@ function sprite (options) {
 	that.context = options.context;
 	that.width = options.width;
 	that.height = options.height;
-	that.image = options.image;
+	if (crouch){
+	that.image = options.image2;
+	}
+	else { that.image = options.image;}
+	
+	
 	that.xcoordinates = this.xcoordinates;
 	that.ycoordinates = this.ycoordinates;
 	that.render = function () {
