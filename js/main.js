@@ -145,22 +145,7 @@ window.onload = function(){
     totalGems: gemsMapintro,
     collectedGems: collectedGems,
     mapcount: 1,
-    xcoordinates: 0,
-    ycoordinates: 0,
-    bob: sprite({
-	    context: this.ctx,
-	    width: 60,
-	    height: 100,
-	    image: renders.sprite,
-	    xcoordinates: this.xcoordinates,
-      ycoordinates: this.ycoordinates,
-      ticksPerFrame : 0,
-      numberOfFrames : 4,
-      loop : 0,
-    }),
-    
   });
-  
 
   game.start();
 
@@ -170,18 +155,7 @@ window.onload = function(){
   });
 
   intro.start();
-
 }
-// function gameLoop () {
-
-//   window.requestAnimationFrame(gameLoop);
-  
-//   bob.updateAnimation();
-//   bob.render();
-// }
-
-// Start the game loop as soon as the sprite sheet is loaded
-//renders.sprite.addEventListener("load", gameLoop);
 
 // function hard copies an array and the objects inside (no reference, true clone)
 function copy(o) {

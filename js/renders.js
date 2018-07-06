@@ -5,8 +5,9 @@ var img2 = document.getElementById("space")
 
 var img3 = new Image(); img3.src= './images/astronaut3.png';
 var img4 = new Image(); img4.src= './images/gem5.png';
-var sprite = new Image(); sprite.src = './../images/sprite.png';
-
+var img5 = new Image(); img5.src= '/images/tile02 copy.png';
+var sprite = new Image(); sprite.src = './../images/sprite_movement_static.png';
+var img6 = new Image(); img6.src= '/images/tile04.png';
 
 var renders = {
   surface : 'brown',
@@ -16,5 +17,7 @@ var renders = {
   PJTexture : img3,
   gemTexture :img4,
   sprite :sprite,
+  surfaceTexture2: img5,
+  specialTile : img6
 
 }

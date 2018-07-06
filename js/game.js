@@ -11,11 +11,8 @@ function Game(options) {
   this.y = options.y;
   this.totalGems = options.totalGems;
   this.collectedGems = options.collectedGems;
-	this.mapcount = options.mapcount;
-	this.xcoordinates = options.xcoordinates;
-	this.ycoordinates = options.ycoordinates;
-	this.bob = options.bob;
-	
+  this.mapcount = options.mapcount;
+    
 }
 
 Game.prototype.start = function() {
@@ -32,22 +29,45 @@ Game.prototype._drawSurface = function() {
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
 			if (this.map[rowIndex][columnIndex] === this.x) {
-				this.ctx.fillStyle = this.ctx.createPattern(renders.surfaceTexture, 'repeat');
-				this.ctx.fillRect(
+				if (rowIndex>0){
+					if (this.map[rowIndex-1][columnIndex] != this.x && this.map[rowIndex-1][columnIndex] != this.y ) {
+							this.ctx.drawImage(
+							renders.surfaceTexture,
+							columnIndex * this.sizeIndex,
+							rowIndex * this.sizeIndex,
+							this.sizeIndex,
+							this.sizeIndex
+						);
+					}
+					else {
+						this.ctx.drawImage(
+						renders.surfaceTexture2,
+						columnIndex * this.sizeIndex,
+						rowIndex * this.sizeIndex,
+						this.sizeIndex,
+						this.sizeIndex
+						);
+					}
+				}
+				else {
+					this.ctx.drawImage(
+					renders.surfaceTexture2,
 					columnIndex * this.sizeIndex,
 					rowIndex * this.sizeIndex,
 					this.sizeIndex,
 					this.sizeIndex
-				);
-      }
+					);
+				}
+			}
+
       else if (this.map[rowIndex][columnIndex] === this.y) {
-				this.ctx.fillStyle = 'red';
-				this.ctx.fillRect(
+				this.ctx.drawImage(
+					renders.specialTile,
 					columnIndex * this.sizeIndex,
 					rowIndex * this.sizeIndex,
 					this.sizeIndex,
 					this.sizeIndex
-				);
+					);
 			}
 		}
 	}
@@ -98,63 +118,22 @@ Game.prototype._drawGems = function() {
 
 
 
-var frameIndex = 0;
-var tickCount = 0;
 
-function sprite (options) {
-	var that = {};
-	frameIndex = 0;
-  tickCount = 0;
-	ticksPerFrame = options.ticksPerFrame || 0;
-	numberOfFrames = options.numberOfFrames || 1;
-	that.loop = options.loop;
-	that.context = options.context;
-	that.width = options.width;
-	that.height = options.height;
-	that.image = options.image;
-	that.xcoordinates = this.xcoordinates;
-	that.ycoordinates = this.ycoordinates;
-	that.render = function () {
-		// Draw the animation
-		that.context.drawImage(
-			 that.image,
-			 frameIndex * that.width / numberOfFrames,
-			 0,
-			 that.width / numberOfFrames,
-			 that.height,
-			 that.xcoordinates,
-			 that.ycoordinates -20,
-			 that.width / numberOfFrames,
-			 60);
-		};
-	
-that.loop = options.loop;
-// update 
-that.updateAnimation = function () {
-	tickCount += 1;
-	if (tickCount > ticksPerFrame) {
-		tickCount = 0;
-// If the current frame index is in range
-			if (frameIndex < numberOfFrames - 1) {	
-	// Go to the next frame
-			frameIndex += 1;
-		} 
-		else if (that.loop) {
-			frameIndex = 0;
-		}	
-	}
-}; 
-	return that;
-	
-}
 
+var xcoordinates = 0;
+var ycoordinates = 0;
 Game.prototype._drawPJ = function() {
 	// create sprite 
+
+
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
 			if (this.map[rowIndex][columnIndex] === 'p') {
-				 this.xcoordinates = 40 * columnIndex;
-				 this.ycoordinates = 40 * rowIndex;
+
+				 xcoordinates = 40 * columnIndex;
+				 ycoordinates = 40 * rowIndex;
+
+				
 				//  this.ctx.drawImage(
 				//   renders.PJTexture,
 				//  	columnIndex * this.sizeIndex,
@@ -166,21 +145,52 @@ Game.prototype._drawPJ = function() {
 			}
 		};
 	};
+	var bob = sprite({
+		context: this.ctx,
+		width: 4000,
+		height: 6712,
+		image: renders.sprite,
+		xcoordinates: xcoordinates,
+		ycoordinates: ycoordinates,
+	
+	});
+	
+//atempt 1 ;
+function sprite (options) {
+	var that = {};
+	frameIndex = 0,
+        tickCount = 0,
+        ticksPerFrame = options.ticksPerFrame || 0;
+	that.context = options.context;
+	that.width = options.width;
+	that.height = options.height;
+	that.image = options.image;
+	that.xcoordinates = this.xcoordinates;
+	that.ycoordinates = this.ycoordinates;
+	that.render = function () {
+		// Draw the animation
+		that.context.drawImage(
+			 that.image,
+			 0,
+			 0,
+			 that.width,
+			 that.height,
+			 that.xcoordinates,
+			 that.ycoordinates -20,
+			 34,
+			 60);
+		};
+	return that;
+}
 
 
 
 
-this.bob.render();
+
+bob.render();
+
 
 };
-// function gameLoop () {
-
-//   window.requestAnimationFrame(gameLoop);
-  
-//   bob.updateAnimation();
-//   bob.render();
-// }
-
 
 Game.prototype._PJmove = function() {
 	switch (this.movementImput) {
