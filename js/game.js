@@ -11,8 +11,11 @@ function Game(options) {
   this.y = options.y;
   this.totalGems = options.totalGems;
   this.collectedGems = options.collectedGems;
-  this.mapcount = options.mapcount;
-    
+	this.mapcount = options.mapcount;
+	this.xcoordinates = options.xcoordinates;
+	this.ycoordinates = options.ycoordinates;
+	this.bob = options.bob;
+	
 }
 
 Game.prototype.start = function() {
@@ -23,9 +26,6 @@ Game.prototype.start = function() {
   this._gemCount();
   this._assignControls();
   this._assignEventsToKeys();
-
-
-  
 };
 
 Game.prototype._drawSurface = function() {
@@ -70,23 +70,117 @@ Game.prototype._drawGems = function() {
 	}
 };
 
+
+
+// get coordinATES
+// Game.prototype._getXCoordinates() = function() {
+// for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
+// 	for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
+// 		if (this.map[rowIndex][columnIndex] === 'p') {
+// 			xcoordinates = 40 * columnIndex;
+			
+// 		}
+// 	}
+// }
+// return xcoordinates;
+// };
+// Game.prototype._getYCoordinates() = function() {
+// 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
+// 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
+// 			if (this.map[rowIndex][columnIndex] === 'p') {
+// 				ycoordinates = 40 * rowIndex;
+				
+// 			}
+// 		}
+// 	}
+// 	return ycoordinates;
+// 	};
+
+
+
+var frameIndex = 0;
+var tickCount = 0;
+
+function sprite (options) {
+	var that = {};
+	frameIndex = 0;
+  tickCount = 0;
+	ticksPerFrame = options.ticksPerFrame || 0;
+	numberOfFrames = options.numberOfFrames || 1;
+	that.loop = options.loop;
+	that.context = options.context;
+	that.width = options.width;
+	that.height = options.height;
+	that.image = options.image;
+	that.xcoordinates = this.xcoordinates;
+	that.ycoordinates = this.ycoordinates;
+	that.render = function () {
+		// Draw the animation
+		that.context.drawImage(
+			 that.image,
+			 frameIndex * that.width / numberOfFrames,
+			 0,
+			 that.width / numberOfFrames,
+			 that.height,
+			 that.xcoordinates,
+			 that.ycoordinates -20,
+			 that.width / numberOfFrames,
+			 60);
+		};
+	
+that.loop = options.loop;
+// update 
+that.updateAnimation = function () {
+	tickCount += 1;
+	if (tickCount > ticksPerFrame) {
+		tickCount = 0;
+// If the current frame index is in range
+			if (frameIndex < numberOfFrames - 1) {	
+	// Go to the next frame
+			frameIndex += 1;
+		} 
+		else if (that.loop) {
+			frameIndex = 0;
+		}	
+	}
+}; 
+	return that;
+	
+}
+
 Game.prototype._drawPJ = function() {
+	// create sprite 
 	for (var columnIndex = 0; columnIndex < 16; columnIndex++) {
 		for (var rowIndex = 0; rowIndex < 16; rowIndex++) {
 			if (this.map[rowIndex][columnIndex] === 'p') {
-				//this.ctx.fillStyle = 'blue';
-				this.ctx.drawImage(
-					renders.PJTexture,
-					columnIndex * this.sizeIndex,
-					rowIndex * this.sizeIndex,
-					this.sizeIndex,
-					this.sizeIndex
-				);
-				// this.ctx.fillRect(columnIndex * this.sizeIndex, rowIndex  * this.sizeIndex, this.sizeIndex, this.sizeIndex);
+				 this.xcoordinates = 40 * columnIndex;
+				 this.ycoordinates = 40 * rowIndex;
+				//  this.ctx.drawImage(
+				//   renders.PJTexture,
+				//  	columnIndex * this.sizeIndex,
+				//  	rowIndex * this.sizeIndex,
+				//  	this.sizeIndex,
+				//  	this.sizeIndex
+				//  );
+				//  this.ctx.fillRect(columnIndex * this.sizeIndex, rowIndex  * this.sizeIndex, this.sizeIndex, this.sizeIndex);
 			}
 		};
 	};
+
+
+
+
+this.bob.render();
+
 };
+// function gameLoop () {
+
+//   window.requestAnimationFrame(gameLoop);
+  
+//   bob.updateAnimation();
+//   bob.render();
+// }
+
 
 Game.prototype._PJmove = function() {
 	switch (this.movementImput) {

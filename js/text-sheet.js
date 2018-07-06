@@ -12,11 +12,11 @@ var text = {
   string4: "Those gems over there might do the work.         ",
   string5: "There's too much gravity to JUMP         ",
   string6: "I approach the gem using *LEFT* and *RIGHT* arrow            ",
-  string7: "I feel a strange power inside….             ",
-  string8: "I got the gem but i can’t reach the second one, I’ll try using the *UP* arrow….     ",
-  string9: "Wow this is a cool power! … will be useful to collect gems              ",
+  string7: "I feel a strange power inside...            ",
+  string8: "I got the gem but i can’t reach the second one, I’ll try using the *UP* arrow...     ",
+  string9: "Wow this is a cool power! ... will be useful to collect gems              ",
   string10: "* * * HELP BOB GET HOME SAFE * * *",
-  string11: "I see a weird tile over there… i should try using the *DOWN* arrow on that one…                                      ",
+  string11: "I see a weird tile over there... i should try using the *DOWN* arrow on that one...                                      ",
   string10: "* * * HELP BOB GET HOME SAFE * * *",
 };
 
@@ -100,7 +100,7 @@ function narrator(textArray){
      $("#text1").empty();   
      displayOnScreen("#text1", textArray[stringCount], 0, textspeed);   
    }
-   if (stringCount === 10 && finished === true && trigger === true ){ 
+   if (stringCount === 11 && finished === true && trigger === true ){ 
     finished = false
     $("#text1").empty();   
     displayOnScreen("#text1", textArray[stringCount], 0, textspeed);   
