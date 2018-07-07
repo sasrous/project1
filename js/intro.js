@@ -4,7 +4,6 @@ function Intro (options) {
 }
 
 
-
 Intro.prototype._assignControls = function(){
   $( "#startbtn" ).click(function() {
    //intro.start();
